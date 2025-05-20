@@ -10,7 +10,10 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: [
+    "http://localhost:3000",
+    "https://mongolian-agriculture-trade.vercel.app"
+  ],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
@@ -30,7 +33,10 @@ app.use((req, res) => {
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://mongolian-agriculture-trade.vercel.app"
+    ],
     methods: ["GET", "POST"]
   }
 });
