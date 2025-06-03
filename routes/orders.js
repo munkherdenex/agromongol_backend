@@ -75,4 +75,37 @@ router.post("/confirm", authenticateUser, async (req, res) => {
   }
 });
 
+router.get("/my-seller-orders", authenticateUser, async (req, res) => {
+  const sellerId = req.user.id;
+
+  try {
+    const result = await pool.query(`
+      SELECT 
+        o.id AS order_id,
+        o.product_id,
+        p.title AS product_title,
+        p.image_url,
+        o.quantity,
+        o.recipient_name,
+        o.phone,
+        o.address,
+        o.buyer_id,
+        u.name AS buyer_name,
+        u.email AS buyer_email,
+        o.created_at
+      FROM orders o
+      JOIN products p ON o.product_id = p.id
+      JOIN users u ON o.buyer_id = u.id
+      WHERE o.seller_id = $1
+      ORDER BY o.created_at DESC
+    `, [sellerId]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("❌ Failed to fetch seller orders:", err);
+    res.status(500).json({ message: "Серверийн алдаа" });
+  }
+});
+
+
 module.exports = router;
